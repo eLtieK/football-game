@@ -1,4 +1,4 @@
-#include "src/headers/player.h"
+#include "../headers/player.h"
 
 void Player::init(int x, int y) {
     this->x = x;
