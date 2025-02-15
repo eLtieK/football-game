@@ -2,15 +2,16 @@
 #define BALL_H
 
 #include <SDL2/SDL.h>
+#include "loader.h"
 
 class Ball {
 public:
     void init(int x, int y);
-    void move();
+    void move(float dt);
     void draw(SDL_Renderer* renderer);
 
 private:
-    int x, y, dx = 4, dy = 4, size = 20;
+    int x, y, dx = 1000, dy = 1000, size = 20;
 };
 
 #endif

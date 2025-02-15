@@ -1,14 +1,16 @@
-#include "src/headers/game.h"
+#include "../headers/game.h"
+#include "../headers/loader.h"
+#include <iostream>
 
 void Game::init(const char* title, int width, int height) {
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+    window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     isRunning = true;
     
-    player1.init(100, 500);
-    player2.init(600, 500);
-    ball.init(400, 300);
+    player1.init(WINDOW_WIDTH / 2 - 400, WINDOW_HEIGHT / 2);
+    player2.init(WINDOW_WIDTH / 2 + 400, WINDOW_HEIGHT / 2);
+    ball.init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 }
 
 void Game::handleEvents() {
@@ -20,7 +22,7 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-    ball.move();
+    ball.move(getDeltaTime());
 }
 
 void Game::render() {
@@ -38,4 +40,14 @@ void Game::clean() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void Game::setDeltaTime(Uint32 &lastTime) {
+    Uint32 currentTime = SDL_GetTicks();
+    deltaTime = (currentTime - lastTime) / 1000.0f;  // Đổi từ ms sang giây
+    lastTime = currentTime;
+}
+
+float Game::getDeltaTime() {
+    return deltaTime;
 }
