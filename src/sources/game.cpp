@@ -8,8 +8,11 @@ void Game::init(const char* title, int width, int height) {
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     isRunning = true;
     
-    player1.init(WINDOW_WIDTH / 2 - 400, WINDOW_HEIGHT / 2);
-    player2.init(WINDOW_WIDTH / 2 + 400, WINDOW_HEIGHT / 2);
+    player1 = new Player();
+    player2 = new Player();
+
+    player1->init(WINDOW_WIDTH / 2 - 400, WINDOW_HEIGHT / 2);
+    player2->init(WINDOW_WIDTH / 2 + 400, WINDOW_HEIGHT / 2);
     ball.init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 }
 
@@ -17,20 +20,43 @@ void Game::handleEvents() {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) isRunning = false;
-        //handleInput(event, player1, player2);
+        SDL_Scancode key = event.key.keysym.scancode;
+        if (event.type == SDL_KEYDOWN) {
+            if (key == SDL_SCANCODE_A) {
+                player1->setDirection("left", true);
+            } if (key == SDL_SCANCODE_D) {
+                player1->setDirection("right", true);
+            } if (key == SDL_SCANCODE_LEFT) {
+                player2->setDirection("left", true);
+            } if (key == SDL_SCANCODE_RIGHT) {
+                player2->setDirection("right", true);
+            }
+        } if (event.type == SDL_KEYUP) {
+            if (key == SDL_SCANCODE_A) {
+                player1->setDirection("left", false);
+            } if (key == SDL_SCANCODE_D) {
+                player1->setDirection("right", false);
+            } if (key == SDL_SCANCODE_LEFT) {
+                player2->setDirection("left", false);
+            } if (key == SDL_SCANCODE_RIGHT) {
+                player2->setDirection("right", false);
+            }
+        }
     }
 }
 
 void Game::update() {
-    ball.move(getDeltaTime());
+    ball.move(deltaTime);
+    player1->move(deltaTime);
+    player2->move(deltaTime);
 }
 
 void Game::render() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    player1.draw(renderer);
-    player2.draw(renderer);
+    player1->draw(renderer);
+    player2->draw(renderer);
     ball.draw(renderer);
 
     SDL_RenderPresent(renderer);
