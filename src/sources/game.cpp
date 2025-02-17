@@ -1,6 +1,5 @@
 #include "../headers/game.h"
-#include "../headers/loader.h"
-#include <iostream>
+
 
 void Game::init(const char* title, int width, int height) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -11,8 +10,8 @@ void Game::init(const char* title, int width, int height) {
     player1 = new Player();
     player2 = new Player();
 
-    player1->init(WINDOW_WIDTH / 2 - 400, WINDOW_HEIGHT / 2);
-    player2->init(WINDOW_WIDTH / 2 + 400, WINDOW_HEIGHT / 2);
+    player1->init(WINDOW_WIDTH / 2 - 400, GROUND);
+    player2->init(WINDOW_WIDTH / 2 + 400, GROUND);
     ball.init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 }
 
@@ -22,25 +21,25 @@ void Game::handleEvents() {
         if (event.type == SDL_QUIT) isRunning = false;
         SDL_Scancode key = event.key.keysym.scancode;
         if (event.type == SDL_KEYDOWN) {
-            if (key == SDL_SCANCODE_A) {
-                player1->setDirection("left", true);
-            } if (key == SDL_SCANCODE_D) {
-                player1->setDirection("right", true);
-            } if (key == SDL_SCANCODE_LEFT) {
-                player2->setDirection("left", true);
-            } if (key == SDL_SCANCODE_RIGHT) {
-                player2->setDirection("right", true);
-            }
+            // player1
+            if (key == SDL_SCANCODE_A) { player1->setDirection("left", true);} 
+            if (key == SDL_SCANCODE_D) { player1->setDirection("right", true);}
+            if (key == SDL_SCANCODE_W) { player1->jump(); }
+
+            // player2
+            if (key == SDL_SCANCODE_LEFT) { player2->setDirection("left", true);} 
+            if (key == SDL_SCANCODE_RIGHT) { player2->setDirection("right", true);}
+            if (key == SDL_SCANCODE_UP) { player2->jump(); }
+
+            if (key == SDL_SCANCODE_SPACE) {ball.applyForce(3000, -1500);}
+
         } if (event.type == SDL_KEYUP) {
-            if (key == SDL_SCANCODE_A) {
-                player1->setDirection("left", false);
-            } if (key == SDL_SCANCODE_D) {
-                player1->setDirection("right", false);
-            } if (key == SDL_SCANCODE_LEFT) {
-                player2->setDirection("left", false);
-            } if (key == SDL_SCANCODE_RIGHT) {
-                player2->setDirection("right", false);
-            }
+            if (key == SDL_SCANCODE_A) { player1->setDirection("left", false);} 
+            if (key == SDL_SCANCODE_D) { player1->setDirection("right", false);}
+
+            // player2
+            if (key == SDL_SCANCODE_LEFT) { player2->setDirection("left", false);} 
+            if (key == SDL_SCANCODE_RIGHT) { player2->setDirection("right", false);}
         }
     }
 }

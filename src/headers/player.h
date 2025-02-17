@@ -2,6 +2,10 @@
 #define PLAYER_H
 
 #include <SDL2/SDL.h>
+#include "loader.h"
+#include "physic.h"
+
+#include <iostream>
 #include <string>
 
 class Player {
