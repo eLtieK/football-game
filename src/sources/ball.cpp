@@ -6,16 +6,22 @@ void Ball::init(int x, int y) {
 }
 
 void Ball::move(float dt) {
+    // van toc luc roi
+    dy += GRAVITY * dt; 
+    // van toc co ma sat
+    dx *= FRICTION;
+
     x += dx * dt;
     y += dy * dt;
+    std::cout << dx << std::endl;
 
     // Va chạm với biên trên và dưới
-    if (y <= 0 || y >= WINDOW_HEIGHT - size) dy = -dy;
+    handleBallCollision(x, y, dx, dy, size);
+}
 
-    // Va chạm với biên trái và phải (reset game)
-    if (x <= 0 || x >= WINDOW_WIDTH - size) {
-        dx = -dx;
-    }
+void Ball::applyForce(float fx, float fy) {
+    dx += fx;
+    dy += fy;
 }
 
 void Ball::draw(SDL_Renderer* renderer) {

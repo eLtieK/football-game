@@ -1,5 +1,4 @@
 #include "../headers/player.h"
-#include <iostream>
 
 void Player::init(int x, int y) {
     this->x = x;
@@ -8,12 +7,25 @@ void Player::init(int x, int y) {
 
 void Player::move(float dt) {
     int dx = 0;
-    int dy = 0;
-    if (direction_left) {dx = -1; dy = 0;}
-    if (direction_right) {dx = 1; dy = 0;}
-    if (direction_right && direction_left) {dx = 0; dy = 0;}
+
+    // left and right
+    if (direction_left) {dx = -1;}
+    if (direction_right) {dx = 1;}
+    if (direction_right && direction_left) {dx = 0;}
     x += dx * speed * dt;
-    y += dy * speed * dt;
+    
+    // jump
+    if (isJumping) {
+        velocityY += GRAVITY * dt;
+        y += velocityY * dt;
+    }
+
+    // reset jump
+    if (y >= GROUND) {
+        y = GROUND;
+        isJumping = false;
+        velocityY = 0;
+    }
 }
 
 void Player::setDirection(std::string dir, bool isMove) {
@@ -22,9 +34,9 @@ void Player::setDirection(std::string dir, bool isMove) {
 }
 
 void Player::jump() {
-    if (!isJumping) {
-        velocityY = -15;
+    if (!isJumping) { 
         isJumping = true;
+        velocityY = JUMP_VELOCITY;
     }
 }
 
