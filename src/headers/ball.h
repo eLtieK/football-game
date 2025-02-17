@@ -32,7 +32,7 @@ public:
 
 private:
     int x, y, size = 50;
-    float dx = 500.0f, dy = 0.0f; 
+    float dx = 0.0f, dy = 0.0f; 
 };
 
 #endif

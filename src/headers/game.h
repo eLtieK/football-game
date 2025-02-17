@@ -16,6 +16,12 @@ public:
     void setDeltaTime(Uint32 &lastTime);
     float getDeltaTime();
 
+    // setter
+    void setIsRunning(bool isRunning) {this->isRunning = isRunning;};
+
+    // getter
+    SDL_Renderer * getRenderer() {return renderer;};
+
 private:
     SDL_Window* window;
     SDL_Renderer* renderer;
