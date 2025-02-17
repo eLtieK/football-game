@@ -5,6 +5,10 @@ void Ball::init(int x, int y) {
     this->y = y;
 }
 
+void Ball::update(float dt) {
+    move(dt);
+}
+
 void Ball::move(float dt) {
     // van toc luc roi
     dy += GRAVITY * dt; 
@@ -13,7 +17,6 @@ void Ball::move(float dt) {
 
     x += dx * dt;
     y += dy * dt;
-    std::cout << dx << std::endl;
 
     // Va chạm với biên trên và dưới
     handleBallCollision(x, y, dx, dy, size);

@@ -5,6 +5,19 @@ void Player::init(int x, int y) {
     this->y = y;
 }
 
+void Player::update(float dt) {
+    move(dt);
+    checkCollisionAndReset();
+}
+
+void Player::checkCollisionAndReset() {
+    Uint32 currentTime = SDL_GetTicks(); 
+    if (currentTime - lastCollisionTime >= resetInterval) {
+        lastCollisionTime = currentTime;
+        isCollision = false;
+    }
+}
+
 void Player::move(float dt) {
     int dx = 0;
 
@@ -21,11 +34,13 @@ void Player::move(float dt) {
     }
 
     // reset jump
-    if (y >= GROUND) {
-        y = GROUND;
+    if (y >= GROUND - height) {
+        y = GROUND - height;
         isJumping = false;
         velocityY = 0;
     }
+
+    handlePlayerCollision(x, y, width, height);
 }
 
 void Player::setDirection(std::string dir, bool isMove) {
