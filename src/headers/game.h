@@ -16,7 +16,6 @@ public:
     void setDeltaTime(Uint32 &lastTime);
     float getDeltaTime();
 
-
 private:
     SDL_Window* window;
     SDL_Renderer* renderer;

@@ -10,8 +10,8 @@ void Game::init(const char* title, int width, int height) {
     player1 = new Player();
     player2 = new Player();
 
-    player1->init(WINDOW_WIDTH / 2 - 400, GROUND);
-    player2->init(WINDOW_WIDTH / 2 + 400, GROUND);
+    player1->init(WINDOW_WIDTH / 2 - 400, GROUND - player1->getHeight());
+    player2->init(WINDOW_WIDTH / 2 + 400, GROUND - player2->getHeight());
     ball.init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 }
 
@@ -45,9 +45,13 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-    ball.move(deltaTime);
-    player1->move(deltaTime);
-    player2->move(deltaTime);
+    ball.update(deltaTime);
+    player1->update(deltaTime);
+    player2->update(deltaTime);
+
+    // collision
+    handleBallPlayerCollision(ball, *player1);
+    handleBallPlayerCollision(ball, *player2);
 }
 
 void Game::render() {

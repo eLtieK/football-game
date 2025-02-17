@@ -5,16 +5,33 @@
 #include "loader.h"
 #include "physic.h"
 #include <iostream>
+#include <algorithm>  
 
 class Ball {
 public:
     void init(int x, int y);
     void move(float dt);
+    void update(float dt);
     void draw(SDL_Renderer* renderer);
     void applyForce(float fx, float fy);
 
+    // getter
+    int getX() {return x;};
+    int getY() {return y;};
+    int getSize() {return size;};
+    float getDx() {return dx;};
+    float getDy() {return y;};
+
+    // setter
+    void setX(int x) {this->x = x;};
+    void setY(int y) {this->y = y;};
+    void setSize(int size) {this->size = size;};
+    void setDx(float dx) {this->dx = dx;};
+    void setDy(float dy) {this->dy = dy;};
+
+
 private:
-    int x, y, size = 20;
+    int x, y, size = 50;
     float dx = 500.0f, dy = 0.0f; 
 };
 
