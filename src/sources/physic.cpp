@@ -19,10 +19,9 @@ void handleBallCollision(int& x, int& y, float& dx, float& dy, int size) {
         y = GROUND - size;
         dy = -dy * GROUND_FACTOR;
         if (abs(dy) <= 300) dy = 0;
-    } else if (y <= 0) {
+    } else if (y < 0) {
         y = 0;
-        if (abs(dy) <= 100) dy = 150;
-        else dy = -dy * BOUNCE_FACTOR;
+        dy = -dy * BOUNCE_FACTOR;
     } 
 }
 

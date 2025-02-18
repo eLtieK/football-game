@@ -8,7 +8,7 @@ void Ui::init() {
     }
 
     // Load font
-    font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 24);
+    font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", 40);
     if (!font) {
         std::cerr << "Failed to load font: " << TTF_GetError() << std::endl;
     }
@@ -34,7 +34,7 @@ SDL_Texture* Ui::createTextTexture(const std::string& text, SDL_Color color) {
     if (!texture) {
         std::cerr << "SDL_CreateTextureFromSurface failed: " << SDL_GetError() << std::endl;
     }
-    textRect = {320, 230, surface->w, surface->h};
+    textRect = {(WINDOW_WIDTH - surface->w )/ 2 , (WINDOW_HEIGHT - surface->h )/ 2, surface->w, surface->h};
     SDL_FreeSurface(surface);
     return texture;
 }
