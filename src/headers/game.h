@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "player.h"
 #include "ball.h"
 
@@ -22,9 +23,13 @@ public:
     // getter
     SDL_Renderer * getRenderer() {return renderer;};
 
+    void loadBackground(const char* path);
+
 private:
     SDL_Window* window;
     SDL_Renderer* renderer;
+    SDL_Texture* backgroundTexture;
+
     bool isRunning;
     Player *player1;
     Player *player2;

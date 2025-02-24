@@ -1,8 +1,8 @@
 #include "../headers/game.h"
 
-
 void Game::init(const char* title, int width, int height) {
     SDL_Init(SDL_INIT_VIDEO);
+    IMG_Init(IMG_INIT_JPG | IMG_INIT_JPG);
     window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_MAXIMIZED);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     isRunning = true;
@@ -13,6 +13,7 @@ void Game::init(const char* title, int width, int height) {
     player1->init(WINDOW_WIDTH / 2 - 400, GROUND - player1->getHeight());
     player2->init(WINDOW_WIDTH / 2 + 400, GROUND - player2->getHeight());
     ball.init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+    loadBackground("assests/images/background.jpg");
 }
 
 void Game::handleEvents() {
@@ -58,6 +59,10 @@ void Game::render() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
+    //background
+    SDL_RenderCopy(renderer, backgroundTexture, NULL, NULL);
+
+    //object
     player1->draw(renderer);
     player2->draw(renderer);
     ball.draw(renderer);
@@ -66,8 +71,10 @@ void Game::render() {
 }
 
 void Game::clean() {
+    SDL_DestroyTexture(backgroundTexture);  // Giải phóng ảnh nền
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    IMG_Quit();
     SDL_Quit();
 }
 
@@ -75,8 +82,24 @@ void Game::setDeltaTime(Uint32 &lastTime) {
     Uint32 currentTime = SDL_GetTicks();
     deltaTime = (currentTime - lastTime) / 1000.0f;  // Đổi từ ms sang giây
     lastTime = currentTime;
+    // std::cout << deltaTime << " " << 1 / deltaTime << std::endl;
 }
 
 float Game::getDeltaTime() {
     return deltaTime;
 }
+
+void Game::loadBackground(const char* path) {
+    SDL_Surface* surface = IMG_Load(path);
+    if (!surface) {
+        SDL_Log("Can't load %s: %s", path, IMG_GetError());
+    }
+
+    backgroundTexture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
+    if (!backgroundTexture) {
+        SDL_Log("Can't create texture: %s", SDL_GetError());
+    }
+}
+
