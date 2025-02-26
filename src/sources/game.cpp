@@ -1,5 +1,14 @@
 #include "../headers/game.h"
 
+const char * BACKGROUND_PATH = "assests/images/background/background2.jpg";
+const char * PLAYER1_HEAD_PATH = "assests/images/head/head1/Picture49.png";
+const char * PLAYER2_HEAD_PATH = "assests/images/head/head2/Picture50.png";
+const char * PLAYER1_SHOE_RUN_PATH = "assests/images/shoe/shoe1/walk";
+const char * PLAYER2_SHOE_RUN_PATH = "assests/images/shoe/shoe2/walk";
+const char * PLAYER1_SHOE_JUMP_PATH = "assests/images/shoe/shoe1/jump";
+const char * PLAYER2_SHOE_JUMP_PATH = "assests/images/shoe/shoe2/jump";
+const char * BALL_PATH = "assests/images/ball/ball.png";
+
 void Game::init(const char* title, int width, int height) {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_JPG | IMG_INIT_JPG);
@@ -10,10 +19,22 @@ void Game::init(const char* title, int width, int height) {
     player1 = new Player();
     player2 = new Player();
 
-    player1->init(WINDOW_WIDTH / 2 - 400, GROUND - player1->getHeight());
-    player2->init(WINDOW_WIDTH / 2 + 400, GROUND - player2->getHeight());
+    player1->init(WINDOW_WIDTH / 2 - 400, GROUND - player1->getRealHeight(), true);
+    player2->init(WINDOW_WIDTH / 2 + 400, GROUND - player2->getRealHeight(), false);
     ball.init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-    loadBackground("assests/images/background.jpg");
+
+    // load texture
+    loadBackground(BACKGROUND_PATH);
+    player1->loadHeadTexture(PLAYER1_HEAD_PATH, renderer);
+    player2->loadHeadTexture(PLAYER2_HEAD_PATH, renderer);
+
+    player1->loadShoeRunTexture(PLAYER1_SHOE_RUN_PATH, renderer);
+    player2->loadShoeRunTexture(PLAYER2_SHOE_RUN_PATH, renderer);
+
+    player1->loadShoeJumpTexture(PLAYER1_SHOE_JUMP_PATH, renderer);
+    player2->loadShoeJumpTexture(PLAYER2_SHOE_JUMP_PATH, renderer);
+
+    ball.loadBallTexture(BALL_PATH, renderer);
 }
 
 void Game::handleEvents() {

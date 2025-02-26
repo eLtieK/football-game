@@ -1,8 +1,16 @@
 #include "../headers/player.h"
 
-void Player::init(int x, int y) {
+void Player::init(int x, int y, bool isPlayer1) {
     this->x = x;
     this->y = y;
+}
+
+void Player::updateShoeAnimation() {
+    Uint32 now = SDL_GetTicks();
+    if(now - lastFrameTime >= frame_delay) {
+        frame_index = (frame_index + 1) % SHOE_FRAMES;
+        lastFrameTime = now;
+    }
 }
 
 void Player::update(float dt) {
@@ -22,9 +30,10 @@ void Player::move(float dt) {
     int dx = 0;
 
     // left and right
-    if (direction_left) {dx = -1;}
-    if (direction_right) {dx = 1;}
-    if (direction_right && direction_left) {dx = 0;}
+    if (direction_right && direction_left) {dx = 0; this->setStandAnimation();}
+    else if (direction_left) {dx = -1; this->updateShoeAnimation();}
+    else if (direction_right) {dx = 1; this->updateShoeAnimation();}
+    else {this->setStandAnimation();}
     x += dx * speed * dt;
     
     // jump
@@ -34,13 +43,14 @@ void Player::move(float dt) {
     }
 
     // reset jump
-    if (y >= GROUND - height) {
-        y = GROUND - height;
+    if (y >= GROUND - this->getRealHeight()) {
+        y = GROUND - this->getRealHeight();
         isJumping = false;
         velocityY = 0;
+        player_state = RUN;
     }
 
-    handlePlayerCollision(x, y, width, height);
+    handlePlayerCollision(x, y, this->getWidth(), this->getRealHeight());
 }
 
 void Player::setDirection(std::string dir, bool isMove) {
@@ -52,11 +62,77 @@ void Player::jump() {
     if (!isJumping) { 
         isJumping = true;
         velocityY = JUMP_VELOCITY;
+        player_state = JUMP;
     }
 }
 
 void Player::draw(SDL_Renderer* renderer) {
-    SDL_Rect rect = {x, y, width, height};
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderFillRect(renderer, &rect);
+    // SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255); // Màu trắng (RGBA)
+    // SDL_Rect debugRect = {x, y - 20, s_width, s_height + h_height - OFFSET_HEAD_SHOE - OFFSET_SHOE_BOT}; // Hình vuông test
+    // SDL_RenderFillRect(renderer, &debugRect); 
+    SDL_Texture** frames;
+    if (player_state == RUN) {frames = playerShoeRunTexture;}
+    else if (player_state == JUMP) {frames = playerShoeJumpTexture;}
+
+    if (frames) {
+        SDL_Rect rect = {x, y - OFFSET_HEAD_SHOE + h_height, s_width, s_height}; // Vị trí và kích thước vẽ ảnh
+        SDL_RenderCopy(renderer, frames[frame_index], NULL, &rect);
+    } else {
+        SDL_Log("Texture is null, can't render player.");
+    }
+
+    // SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255); // Màu trắng (RGBA)
+    // SDL_Rect debugRect2 = {x, y + OFFSET_HEAD_SHOE, h_width, h_height}; // Hình vuông test
+    // SDL_RenderFillRect(renderer, &debugRect2); 
+
+    if (playerHeadTexture) {
+        SDL_Rect rect = {x, y - OFFSET_SHOE_BOT, h_width, h_height}; // Vị trí và kích thước vẽ ảnh
+        SDL_RenderCopy(renderer, playerHeadTexture, NULL, &rect);
+    } else {
+        SDL_Log("Texture is null, can't render player.");
+    }
+}
+
+void Player::loadHeadTexture(const char* path, SDL_Renderer* renderer) {
+    SDL_Surface* surface = IMG_Load(path);
+    if (!surface) {
+        SDL_Log("Can't load %s: %s", path, IMG_GetError());
+    }
+    
+    playerHeadTexture = SDL_CreateTextureFromSurface(renderer, surface);
+    
+    SDL_FreeSurface(surface);
+    if (!playerHeadTexture) {
+        SDL_Log("Can't create texture: %s", SDL_GetError());
+    }
+}
+
+void Player::loadShoeRunTexture(const char* path, SDL_Renderer* renderer) {
+    for (int i = 0; i < SHOE_FRAMES; i++) {
+        std::string filePath = std::string(path) + "/" + std::to_string(i + 1) + ".png"; 
+        SDL_Surface* surface = IMG_Load(filePath.c_str());
+
+        if (!surface) {
+            SDL_Log("Failed to load %s: %s", filePath.c_str(), SDL_GetError());
+            continue;
+        }
+
+        playerShoeRunTexture[i] = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_FreeSurface(surface);
+    }
+}
+
+void Player::loadShoeJumpTexture(const char* path, SDL_Renderer* renderer) {
+    for (int i = 0; i < SHOE_FRAMES; i++) {
+        std::string filePath = std::string(path) + "/" + std::to_string(i + 1) + ".png"; 
+        SDL_Surface* surface = IMG_Load(filePath.c_str());
+
+        if (!surface) {
+            SDL_Log("Failed to load %s: %s", filePath.c_str(), SDL_GetError());
+            continue;
+        }
+
+        playerShoeJumpTexture[i] = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_FreeSurface(surface);
+    }
 }

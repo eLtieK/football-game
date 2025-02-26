@@ -15,6 +15,8 @@ public:
     void draw(SDL_Renderer* renderer);
     void applyForce(float fx, float fy);
 
+    void loadBallTexture(const char* path, SDL_Renderer* renderer);
+
     // getter
     int getX() {return x;};
     int getY() {return y;};
@@ -31,8 +33,9 @@ public:
 
 
 private:
-    int x, y, size = 50;
+    int x, y, size = 80;
     float dx = 0.0f, dy = 0.0f; 
+    SDL_Texture* ballTexture;
 };
 
 #endif

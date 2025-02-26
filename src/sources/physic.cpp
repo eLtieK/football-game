@@ -25,14 +25,14 @@ void handleBallCollision(int& x, int& y, float& dx, float& dy, int size) {
     } 
 }
 
-void handlePlayerCollision(int& x, int &y, int& width, int& height) {
+void handlePlayerCollision(int& x, int &y, int width, int height) {
     if (x <= 0) {x = 0;} 
     else if (x + width >= WINDOW_WIDTH) {x = WINDOW_WIDTH - width;}
 }
 
 bool checkCollision(int ballX, int ballY, int ballSize, int playerX, int playerY, int playerWidth, int playerHeight) {
     return !(ballX + ballSize < playerX || ballX > playerX + playerWidth ||
-             ballY + ballSize < playerY || ballY > playerY + playerHeight);
+             ballY + ballSize < playerY || ballY > playerY + playerHeight );
 }
 
 void handleBallPlayerCollision(Ball& ball, Player& player) {
@@ -46,7 +46,9 @@ void handleBallPlayerCollision(Ball& ball, Player& player) {
     int playerX = player.getX();
     int playerY = player.getY();
     int playerWidth = player.getWidth();
-    int playerHeight = player.getHeight();
+    int playerHeight = player.getRealHeight();
+
+    // std::cout << playerY << " " << playerHeight << std::endl;
 
     if (checkCollision(ballX, ballY, ballSize, playerX, playerY, playerWidth, playerHeight)) {
         // Xác định hướng va chạm
