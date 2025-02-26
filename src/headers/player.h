@@ -2,27 +2,44 @@
 #define PLAYER_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include "loader.h"
 #include "physic.h"
 
 #include <iostream>
 #include <string>
+#include <cstring>
+
+const int OFFSET_SHOE_BOT = 50;
+const int OFFSET_HEAD_SHOE = 120;
+const int SHOE_FRAMES = 10;
+
+enum AnimationState {
+    RUN,
+    JUMP
+};
 
 class Player {
 public:
-    void init(int x, int y);
+    void init(int x, int y, bool isPlayer1);
     void move(float dt);
     void jump();
     void update(float dt);
+    void updateShoeAnimation();
     void draw(SDL_Renderer* renderer);
     void setDirection(std::string dir, bool isMove);
     void checkCollisionAndReset();
 
+    void loadHeadTexture(const char* path, SDL_Renderer* renderer);
+    void loadShoeRunTexture(const char* path, SDL_Renderer* renderer);
+    void loadShoeJumpTexture(const char* path, SDL_Renderer* renderer);
+
     // getter
     int getX() {return x;};
     int getY() {return y;};
-    int getHeight() {return height;};
-    int getWidth() {return width;};
+    // int getHeight() {return h_height + s_height;};
+    int getRealHeight() {return h_height + s_height - OFFSET_HEAD_SHOE - OFFSET_SHOE_BOT;};
+    int getWidth() {return h_width;};
     bool getIsCollision() {return isCollision;};
 
     // setter
@@ -31,18 +48,35 @@ public:
         lastCollisionTime = SDL_GetTicks();
     };
 
+    //animation
+    void setStandAnimation() {
+        if (player_state == RUN) {this->frame_index = 0;} 
+        else {this->updateShoeAnimation();}
+    }
+
 protected:
-    int x, y, width = 100, height = 100;
+    int x, y;
+    int h_width = 180, h_height = 180;
+    int s_width = 180, s_height = 180;
     int speed = 1400;
     int velocityY = 0; 
     bool isJumping = false;
     bool direction_left = false;
     bool direction_right = false;
+    SDL_Texture* playerHeadTexture;
+    SDL_Texture* playerShoeRunTexture[SHOE_FRAMES];
+    SDL_Texture* playerShoeJumpTexture[SHOE_FRAMES];
 
     //timer
     bool isCollision = false;
     Uint32 lastCollisionTime = 0;
     const Uint32 resetInterval = 100; 
+
+    //timer_shoe
+    Uint32 lastFrameTime = 0;
+    const int frame_delay = 50;
+    int frame_index = 0;
+    AnimationState player_state = RUN;
 };
 
 #endif
