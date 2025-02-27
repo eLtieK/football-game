@@ -35,7 +35,7 @@ bool checkCollision(int ballX, int ballY, int ballSize, int playerX, int playerY
              ballY + ballSize < playerY || ballY > playerY + playerHeight );
 }
 
-void handleBallPlayerCollision(Ball& ball, Player& player) {
+void handleBallPlayerCollision(Ball& ball, Player& player, AnimationSprite& smoke) {
     if (player.getIsCollision()) {return ;} 
     int ballX = ball.getX();
     int ballY = ball.getY();
@@ -52,6 +52,9 @@ void handleBallPlayerCollision(Ball& ball, Player& player) {
 
     if (checkCollision(ballX, ballY, ballSize, playerX, playerY, playerWidth, playerHeight)) {
         // Xác định hướng va chạm
+        smoke.setPos(ballX, ballY);
+        smoke.setVisible(true);
+        
         bool hitFromTop = ballY + ballSize >= playerY && ballY <= playerY;  // Bóng va chạm từ trên
         bool hitFromBottom = ballY <= playerY + playerHeight && ballY + ballSize >= playerY + playerHeight;  // Bóng va chạm từ dưới
         bool hitFromLeft = ballX + ballSize >= playerX && ballX <= playerX;  // Bóng va chạm từ trái

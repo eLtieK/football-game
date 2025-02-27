@@ -5,6 +5,8 @@
 #include <SDL2/SDL_image.h>
 #include "player.h"
 #include "ball.h"
+#include "goal.h"
+#include "sprite.h"
 
 class Game {
 public:
@@ -34,8 +36,11 @@ private:
     Player *player1;
     Player *player2;
     Ball ball;
+    Goal *goalLeft;
+    Goal *goalRight;
     int score1, score2;
     float deltaTime;
+    AnimationSprite *smoke;
 };
 
 #endif
