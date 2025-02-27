@@ -8,6 +8,7 @@ const char * PLAYER2_SHOE_RUN_PATH = "assests/images/shoe/shoe2/walk";
 const char * PLAYER1_SHOE_JUMP_PATH = "assests/images/shoe/shoe1/jump";
 const char * PLAYER2_SHOE_JUMP_PATH = "assests/images/shoe/shoe2/jump";
 const char * BALL_PATH = "assests/images/ball/ball.png";
+const char * SMOKE_PATH = "assests/images/smoke";
 
 void Game::init(const char* title, int width, int height) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -18,10 +19,18 @@ void Game::init(const char* title, int width, int height) {
     
     player1 = new Player();
     player2 = new Player();
-
     player1->init(WINDOW_WIDTH / 2 - 400, GROUND - player1->getRealHeight(), true);
     player2->init(WINDOW_WIDTH / 2 + 400, GROUND - player2->getRealHeight(), false);
+
+    goalLeft = new Goal();
+    goalRight = new Goal();
+    goalLeft->init(0, GROUND - goalLeft->getHeight());
+    goalRight->init(WINDOW_WIDTH - goalRight->getWidth(), GROUND - goalRight->getHeight());
+
     ball.init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+
+    smoke = new AnimationSprite();
+    smoke->init(200,200,6,50);
 
     // load texture
     loadBackground(BACKGROUND_PATH);
@@ -35,6 +44,7 @@ void Game::init(const char* title, int width, int height) {
     player2->loadShoeJumpTexture(PLAYER2_SHOE_JUMP_PATH, renderer);
 
     ball.loadBallTexture(BALL_PATH, renderer);
+    smoke->loadTexture(SMOKE_PATH, renderer);
 }
 
 void Game::handleEvents() {
@@ -70,10 +80,11 @@ void Game::update() {
     ball.update(deltaTime);
     player1->update(deltaTime);
     player2->update(deltaTime);
+    smoke->update(deltaTime);
 
     // collision
-    handleBallPlayerCollision(ball, *player1);
-    handleBallPlayerCollision(ball, *player2);
+    handleBallPlayerCollision(ball, *player1, *smoke);
+    handleBallPlayerCollision(ball, *player2, *smoke);
 }
 
 void Game::render() {
@@ -87,6 +98,9 @@ void Game::render() {
     player1->draw(renderer);
     player2->draw(renderer);
     ball.draw(renderer);
+    smoke->draw(renderer);
+    goalLeft->draw(renderer);
+    goalRight->draw(renderer);
 
     SDL_RenderPresent(renderer);
 }

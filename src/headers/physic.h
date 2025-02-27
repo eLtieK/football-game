@@ -3,10 +3,12 @@
 
 #include "loader.h"
 #include "player.h"
+#include "sprite.h"
 #include <cmath>
 
 class Ball;
 class Player;
+class AnimationSprite;
 
 const int JUMP_VELOCITY = -1000;
 const int GRAVITY = 5000;
@@ -21,6 +23,6 @@ const float MAX_BALL_V_SPEED = 1400.0f;
 void handleBallCollision(int& x, int& y, float& dx, float& dy, int size);
 void handlePlayerCollision(int& x, int &y, int width, int height);
 bool checkCollision(int ballX, int ballY, int ballSize, int playerX, int playerY, int playerWidth, int playerHeight);
-void handleBallPlayerCollision(Ball& ball, Player& player);
+void handleBallPlayerCollision(Ball& ball, Player& player, AnimationSprite& smoke);
 
 #endif
