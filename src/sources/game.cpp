@@ -19,8 +19,8 @@ void Game::init(const char* title, int width, int height) {
     
     player1 = new Player();
     player2 = new Player();
-    player1->init(WINDOW_WIDTH / 2 - 400, GROUND - player1->getRealHeight(), true);
-    player2->init(WINDOW_WIDTH / 2 + 400, GROUND - player2->getRealHeight(), false);
+    player1->init(WINDOW_WIDTH / 2 - 400, GROUND - player1->getRealHeight(), true, this->renderer);
+    player2->init(WINDOW_WIDTH / 2 + 400, GROUND - player2->getRealHeight(), false, this->renderer);
 
     goalLeft = new Goal();
     goalRight = new Goal();
@@ -45,6 +45,13 @@ void Game::init(const char* title, int width, int height) {
 
     ball.loadBallTexture(BALL_PATH, renderer);
     smoke->loadTexture(SMOKE_PATH, renderer);
+
+    // Ui
+    game_clock = new UiText();
+    game_clock->setRenderer(renderer);
+    game_clock->init("0:" + std::to_string(currentTime), {255,255,255,255}, 80);
+    game_clock->setPosition(WINDOW_WIDTH / 2 + 10, WINDOW_HEIGHT / 6);
+    game_clock->setIsOutline(true);
 }
 
 void Game::handleEvents() {
@@ -85,6 +92,21 @@ void Game::update() {
     // collision
     handleBallPlayerCollision(ball, *player1, *smoke);
     handleBallPlayerCollision(ball, *player2, *smoke);
+    handleBallGoalCollision(ball, *goalLeft);
+    handleBallGoalCollision(ball, *goalRight);
+
+    // Ui
+    updateClock();
+}
+
+void Game::updateClock() {
+    currentTime = (maxTime - SDL_GetTicks() / 1000);
+    currentTime = std::max(currentTime, 0);
+
+    std::string str;
+    if (currentTime < 10) {str = "0:0" + std::to_string(currentTime);}
+    else {str = "0:" + std::to_string(currentTime);}
+    game_clock->setName(str);
 }
 
 void Game::render() {
@@ -101,6 +123,9 @@ void Game::render() {
     smoke->draw(renderer);
     goalLeft->draw(renderer);
     goalRight->draw(renderer);
+
+    //ui
+    game_clock->draw();
 
     SDL_RenderPresent(renderer);
 }

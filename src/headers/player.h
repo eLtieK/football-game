@@ -5,11 +5,14 @@
 #include <SDL2/SDL_image.h>
 #include "loader.h"
 #include "physic.h"
+#include "ui.h"
 
 #include <iostream>
 #include <string>
 #include <cstring>
 
+const int OFFSET_HEAD_FRONT = 20;
+const int OFFSET_HEAD_NAME = 40;
 const int OFFSET_SHOE_BOT = 50;
 const int OFFSET_HEAD_SHOE = 120;
 const int SHOE_FRAMES = 10;
@@ -21,7 +24,7 @@ enum AnimationState {
 
 class Player {
 public:
-    void init(int x, int y, bool isPlayer1);
+    void init(int x, int y, bool isPlayer1, SDL_Renderer* renderer);
     void move(float dt);
     void jump();
     void update(float dt);
@@ -66,6 +69,7 @@ protected:
     SDL_Texture* playerHeadTexture;
     SDL_Texture* playerShoeRunTexture[SHOE_FRAMES];
     SDL_Texture* playerShoeJumpTexture[SHOE_FRAMES];
+    UiText* nametag;
 
     //timer
     bool isCollision = false;

@@ -7,12 +7,14 @@
 #include "ball.h"
 #include "goal.h"
 #include "sprite.h"
+#include "ui.h"
 
 class Game {
 public:
     void init(const char* title, int width, int height);
     void handleEvents();
     void update();
+    void updateClock();
     void render();
     void clean();
     bool running() { return isRunning; }
@@ -41,6 +43,11 @@ private:
     int score1, score2;
     float deltaTime;
     AnimationSprite *smoke;
+
+    //Ui
+    UiText* game_clock;
+    int currentTime = 60;
+    int maxTime = 60;
 };
 
 #endif
