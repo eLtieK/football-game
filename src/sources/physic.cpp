@@ -1,6 +1,7 @@
 #include "../headers/physic.h"
 #include "../headers/player.h"
 #include "../headers/ball.h"
+#include "../headers/logic.h"
 #include <ostream>
 #include <iostream>
 
@@ -79,4 +80,38 @@ void handleBallPlayerCollision(Ball& ball, Player& player, AnimationSprite& smok
 
         player.setIsCollision(true);
     }
+}
+
+void handleBallGoalCollision(Ball& ball, Goal& goal, GameLogic& uiLogic) {
+    int ballX = ball.getX();
+    int ballY = ball.getY();
+    int ballSize = ball.getSize();
+    float ballDx = ball.getDx();
+    float ballDy = ball.getDy();
+
+    int goalX = goal.getRect().x;
+    int goalY = goal.getRect().y;
+    int goalWidth = goal.getRect().w;
+    int goalHeight = goal.getRect().h;
+
+    // std::cout << playerY << " " << playerHeight << std::endl;
+
+    if (checkCollision(ballX, ballY, ballSize, goalX, goalY, goalWidth, goalHeight)) {
+        // Xác định hướng va chạm
+        
+        bool hitFromTop = ballY + ballSize >= goalY && ballY <= goalY;  // Bóng va chạm từ trên
+        bool hitFromLeft = ballX + ballSize >= goalX && ballX <= goalX;  // Bóng va chạm từ trái
+        bool hitFromRight = ballX <= goalX + goalWidth && ballX + ballSize >= goalX + goalWidth;  // Bóng va chạm từ phải
+
+        if (hitFromTop) {ball.applyForce(0,-ballDy * BOUNCE_FACTOR);} 
+        else if (hitFromLeft || hitFromLeft) {
+            goal.setGoal();
+
+            if (goal.getIsLeft()) {uiLogic.addScore(1, "player2");}
+            else {uiLogic.addScore(1,"player1");}
+
+            ball.setX(WINDOW_WIDTH / 2); ball.setY(WINDOW_HEIGHT / 4);
+            ball.setDx(0); ball.setDy(0);
+        } 
+    } 
 }

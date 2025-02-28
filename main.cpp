@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
             ui.handleEvents(game);
             ui.update();
             ui.render();
+            game.setStartTime();
         } else {
             game.handleEvents();
             game.update();

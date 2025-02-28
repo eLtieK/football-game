@@ -1,8 +1,12 @@
 #include "../headers/player.h"
 
-void Player::init(int x, int y, bool isPlayer1) {
+void Player::init(int x, int y, bool isPlayer1, SDL_Renderer* renderer) {
     this->x = x;
     this->y = y;
+    nametag = new UiText();
+    nametag->setRenderer(renderer);
+    if (isPlayer1) {nametag->init("Player 1", {0,175,255,255}, 40); nametag->setIsPlayer1(true);} 
+    else {nametag->init("Player 2", {255,128,0,255}, 40); nametag->setIsPlayer1(false);} 
 }
 
 void Player::updateShoeAnimation() {
@@ -16,6 +20,45 @@ void Player::updateShoeAnimation() {
 void Player::update(float dt) {
     move(dt);
     checkCollisionAndReset();
+}
+
+void Player::updateAI(int ballX, int ballY, std::string team) {
+    // Nếu bóng bên trái, đi sang trái
+    int midfield = WINDOW_WIDTH / 2;
+    if (!((team == "left" && ballX <= midfield) || (team == "right" && ballX >= midfield))) {
+        if (team == "right" && this->x < midfield + midfield / 4) {
+            setDirection("right", true);
+            setDirection("left", false);
+        } else if (team == "left" && this->x > midfield - midfield / 4) {
+            setDirection("left", true);
+            setDirection("right", false);
+        }
+        else {
+            setDirection("left", false);
+            setDirection("right", false);
+        }
+        return;
+    }
+    
+    if (ballX < x) {
+        setDirection("left", true);
+        setDirection("right", false);
+    } 
+    // Nếu bóng bên phải, đi sang phải
+    else if (ballX > x) {
+        setDirection("right", true);
+        setDirection("left", false);
+    } 
+    // Nếu gần bóng, dừng lại
+    else {
+        setDirection("left", false);
+        setDirection("right", false);
+    }
+
+    // Nếu bóng cao hơn AI và AI chưa nhảy, thì nhảy
+    if (ballY < y - 50 && !isJumping) {
+        jump();
+    }
 }
 
 void Player::checkCollisionAndReset() {
@@ -51,6 +94,10 @@ void Player::move(float dt) {
     }
 
     handlePlayerCollision(x, y, this->getWidth(), this->getRealHeight());
+
+    int offset = OFFSET_HEAD_FRONT;
+    if(nametag->getIsPlayer1()) {offset = -offset;}
+    nametag->setPosition(x + this->h_width / 2 + offset, y - OFFSET_HEAD_NAME);
 }
 
 void Player::setDirection(std::string dir, bool isMove) {
@@ -91,6 +138,8 @@ void Player::draw(SDL_Renderer* renderer) {
     } else {
         SDL_Log("Texture is null, can't render player.");
     }
+
+    nametag->draw();
 }
 
 void Player::loadHeadTexture(const char* path, SDL_Renderer* renderer) {

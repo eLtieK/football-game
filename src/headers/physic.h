@@ -4,11 +4,14 @@
 #include "loader.h"
 #include "player.h"
 #include "sprite.h"
+#include "goal.h"
 #include <cmath>
+#include <string>
 
 class Ball;
 class Player;
 class AnimationSprite;
+class GameLogic;
 
 const int JUMP_VELOCITY = -1000;
 const int GRAVITY = 5000;
@@ -24,5 +27,6 @@ void handleBallCollision(int& x, int& y, float& dx, float& dy, int size);
 void handlePlayerCollision(int& x, int &y, int width, int height);
 bool checkCollision(int ballX, int ballY, int ballSize, int playerX, int playerY, int playerWidth, int playerHeight);
 void handleBallPlayerCollision(Ball& ball, Player& player, AnimationSprite& smoke);
+void handleBallGoalCollision(Ball& ball, Goal& goal, GameLogic& uiLogic);
 
 #endif

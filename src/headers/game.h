@@ -7,16 +7,20 @@
 #include "ball.h"
 #include "goal.h"
 #include "sprite.h"
+#include "ui.h"
+#include "logic.h"
 
 class Game {
 public:
     void init(const char* title, int width, int height);
     void handleEvents();
     void update();
+    void updateClock();
     void render();
     void clean();
     bool running() { return isRunning; }
     void setDeltaTime(Uint32 &lastTime);
+    void setStartTime() {this->startTime = SDL_GetTicks();};
     float getDeltaTime();
 
     // setter
@@ -41,6 +45,13 @@ private:
     int score1, score2;
     float deltaTime;
     AnimationSprite *smoke;
+
+    //Ui
+    UiText* game_clock;
+    int startTime = 0;
+    int currentTime = 60;
+    int maxTime = 60;
+    GameLogic uiLogic;
 };
 
 #endif
