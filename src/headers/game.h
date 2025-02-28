@@ -8,6 +8,7 @@
 #include "goal.h"
 #include "sprite.h"
 #include "ui.h"
+#include "logic.h"
 
 class Game {
 public:
@@ -19,6 +20,7 @@ public:
     void clean();
     bool running() { return isRunning; }
     void setDeltaTime(Uint32 &lastTime);
+    void setStartTime() {this->startTime = SDL_GetTicks();};
     float getDeltaTime();
 
     // setter
@@ -46,8 +48,10 @@ private:
 
     //Ui
     UiText* game_clock;
+    int startTime = 0;
     int currentTime = 60;
     int maxTime = 60;
+    GameLogic uiLogic;
 };
 
 #endif

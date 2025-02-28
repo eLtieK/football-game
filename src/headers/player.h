@@ -28,6 +28,7 @@ public:
     void move(float dt);
     void jump();
     void update(float dt);
+    void updateAI(int ballX, int ballY, std::string team);
     void updateShoeAnimation();
     void draw(SDL_Renderer* renderer);
     void setDirection(std::string dir, bool isMove);

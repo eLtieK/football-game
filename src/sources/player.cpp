@@ -22,6 +22,45 @@ void Player::update(float dt) {
     checkCollisionAndReset();
 }
 
+void Player::updateAI(int ballX, int ballY, std::string team) {
+    // Nếu bóng bên trái, đi sang trái
+    int midfield = WINDOW_WIDTH / 2;
+    if (!((team == "left" && ballX <= midfield) || (team == "right" && ballX >= midfield))) {
+        if (team == "right" && this->x < midfield + midfield / 4) {
+            setDirection("right", true);
+            setDirection("left", false);
+        } else if (team == "left" && this->x > midfield - midfield / 4) {
+            setDirection("left", true);
+            setDirection("right", false);
+        }
+        else {
+            setDirection("left", false);
+            setDirection("right", false);
+        }
+        return;
+    }
+    
+    if (ballX < x) {
+        setDirection("left", true);
+        setDirection("right", false);
+    } 
+    // Nếu bóng bên phải, đi sang phải
+    else if (ballX > x) {
+        setDirection("right", true);
+        setDirection("left", false);
+    } 
+    // Nếu gần bóng, dừng lại
+    else {
+        setDirection("left", false);
+        setDirection("right", false);
+    }
+
+    // Nếu bóng cao hơn AI và AI chưa nhảy, thì nhảy
+    if (ballY < y - 50 && !isJumping) {
+        jump();
+    }
+}
+
 void Player::checkCollisionAndReset() {
     Uint32 currentTime = SDL_GetTicks(); 
     if (currentTime - lastCollisionTime >= resetInterval) {

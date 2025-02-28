@@ -22,6 +22,13 @@ void Goal::loadGoalTexture(const char* path, SDL_Renderer* renderer) {
     SDL_FreeSurface(surface);
 }
 
+void Goal::update() {
+    if (isGreen && SDL_GetTicks() - colorChangeTime >= delay_time) {
+        this->setColor(255, 255, 255); // Màu trắng hoặc màu gốc
+        isGreen = false;
+    }
+}
+
 void Goal::draw(SDL_Renderer* renderer) {
     if (texture) {
         SDL_RenderCopy(renderer, texture, NULL, &rect);
@@ -37,4 +44,10 @@ void Goal::draw(SDL_Renderer* renderer) {
 
 void Goal::setColor(Uint8 r, Uint8 g, Uint8 b) {
     color = {r, g, b, 255}; 
+}
+
+void Goal::setGoal() {
+    this->setColor(0, 255, 0);
+    colorChangeTime = SDL_GetTicks();
+    isGreen = true;
 }

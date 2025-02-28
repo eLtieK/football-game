@@ -1,6 +1,7 @@
 #include "../headers/physic.h"
 #include "../headers/player.h"
 #include "../headers/ball.h"
+#include "../headers/logic.h"
 #include <ostream>
 #include <iostream>
 
@@ -81,7 +82,7 @@ void handleBallPlayerCollision(Ball& ball, Player& player, AnimationSprite& smok
     }
 }
 
-void handleBallGoalCollision(Ball& ball, Goal& goal) {
+void handleBallGoalCollision(Ball& ball, Goal& goal, GameLogic& uiLogic) {
     int ballX = ball.getX();
     int ballY = ball.getY();
     int ballSize = ball.getSize();
@@ -103,6 +104,14 @@ void handleBallGoalCollision(Ball& ball, Goal& goal) {
         bool hitFromRight = ballX <= goalX + goalWidth && ballX + ballSize >= goalX + goalWidth;  // Bóng va chạm từ phải
 
         if (hitFromTop) {ball.applyForce(0,-ballDy * BOUNCE_FACTOR);} 
-        else if (hitFromLeft || hitFromLeft) {goal.setColor(0,255,0);} 
+        else if (hitFromLeft || hitFromLeft) {
+            goal.setGoal();
+
+            if (goal.getIsLeft()) {uiLogic.addScore(1, "player2");}
+            else {uiLogic.addScore(1,"player1");}
+
+            ball.setX(WINDOW_WIDTH / 2); ball.setY(WINDOW_HEIGHT / 4);
+            ball.setDx(0); ball.setDy(0);
+        } 
     } 
 }
