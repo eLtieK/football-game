@@ -110,6 +110,7 @@ void Player::jump() {
         isJumping = true;
         velocityY = JUMP_VELOCITY;
         player_state = JUMP;
+        // Audio::getInstance().playSound(JUMP_PATH);
     }
 }
 

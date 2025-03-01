@@ -52,10 +52,7 @@ void handleBallPlayerCollision(Ball& ball, Player& player, AnimationSprite& smok
     // std::cout << playerY << " " << playerHeight << std::endl;
 
     if (checkCollision(ballX, ballY, ballSize, playerX, playerY, playerWidth, playerHeight)) {
-        // Xác định hướng va chạm
-        smoke.setPos(ballX, ballY);
-        smoke.setVisible(true);
-        
+        // Xác định hướng va chạm        
         bool hitFromTop = ballY + ballSize >= playerY && ballY <= playerY;  // Bóng va chạm từ trên
         bool hitFromBottom = ballY <= playerY + playerHeight && ballY + ballSize >= playerY + playerHeight;  // Bóng va chạm từ dưới
         bool hitFromLeft = ballX + ballSize >= playerX && ballX <= playerX;  // Bóng va chạm từ trái
@@ -79,6 +76,11 @@ void handleBallPlayerCollision(Ball& ball, Player& player, AnimationSprite& smok
         }
 
         player.setIsCollision(true);
+
+        smoke.setPos(ballX, ballY);
+        smoke.setVisible(true);
+
+        Audio::getInstance().playRandomKick();
     }
 }
 
@@ -103,8 +105,9 @@ void handleBallGoalCollision(Ball& ball, Goal& goal, GameLogic& uiLogic) {
         bool hitFromLeft = ballX + ballSize >= goalX && ballX <= goalX;  // Bóng va chạm từ trái
         bool hitFromRight = ballX <= goalX + goalWidth && ballX + ballSize >= goalX + goalWidth;  // Bóng va chạm từ phải
 
-        if (hitFromTop) {ball.applyForce(0,-ballDy * BOUNCE_FACTOR);} 
+        if (hitFromTop) {ball.applyForce(0,-ballDy * BOUNCE_FACTOR); Audio::getInstance().playSound(CROSSBAR_PATH);} 
         else if (hitFromLeft || hitFromLeft) {
+            Audio::getInstance().playSound(GOAL_PATH);
             goal.setGoal();
 
             if (goal.getIsLeft()) {uiLogic.addScore(1, "player2");}
