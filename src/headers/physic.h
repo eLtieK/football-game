@@ -5,6 +5,7 @@
 #include "player.h"
 #include "sprite.h"
 #include "goal.h"
+#include "audio.h"
 #include <cmath>
 #include <string>
 
