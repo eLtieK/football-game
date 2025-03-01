@@ -19,8 +19,8 @@ void Game::init(const char* title, int width, int height) {
     
     player1 = new Player();
     player2 = new Player();
-    player1->init(WINDOW_WIDTH / 2 - 400, GROUND - player1->getRealHeight(), true, this->renderer);
-    player2->init(WINDOW_WIDTH / 2 + 400, GROUND - player2->getRealHeight(), false, this->renderer);
+    player1->init(WINDOW_WIDTH / 2 - 400 , GROUND - player1->getRealHeight(), true, this->renderer);
+    player2->init(WINDOW_WIDTH / 2 + 400 - player2->getWidth(), GROUND - player2->getRealHeight(), false, this->renderer);
 
     goalLeft = new Goal(); goalLeft->setIsLeft(true);
     goalRight = new Goal(); goalRight->setIsLeft(false);
@@ -54,6 +54,7 @@ void Game::init(const char* title, int width, int height) {
     game_clock->setIsOutline(true);
 
     uiLogic.init(renderer);
+    gameOverScreen.init(renderer);
 }
 
 void Game::handleEvents() {
@@ -86,9 +87,21 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
+    if (this->isPause) {
+        std::string str = gameOverScreen.update();
+        if (str == "playAgain") {this->restartScreen();}
+        if (str == "mainMenu") {
+            Ui::setIsIntro(true);
+            this->restartScreen();
+        }
+        if (str == "quit") {isRunning = false;}
+        return;
+    }
     //Ai
-    player2->updateAI(ball.getX(), ball.getY(), "right");
-    // player1->updateAI(ball.getX(), ball.getY(), "left");
+    if (this->isAi) {
+        player2->updateAI(ball.getX(), ball.getY(), "right");
+        // player1->updateAI(ball.getX(), ball.getY(), "left");
+    }
 
     ball.update(deltaTime);
     player1->update(deltaTime);
@@ -97,13 +110,13 @@ void Game::update() {
     goalLeft->update();
     goalRight->update();
 
-    // collision
+    // // collision
     handleBallPlayerCollision(ball, *player1, *smoke);
     handleBallPlayerCollision(ball, *player2, *smoke);
     handleBallGoalCollision(ball, *goalLeft, uiLogic);
     handleBallGoalCollision(ball, *goalRight, uiLogic);
 
-    // Ui
+    // // Ui
     updateClock();
 }
 
@@ -115,6 +128,10 @@ void Game::updateClock() {
     if (currentTime < 10) {str = "0:0" + std::to_string(currentTime);}
     else {str = "0:" + std::to_string(currentTime);}
     game_clock->setName(str);
+    if (currentTime == 0) {
+        this->setIsPause(true);
+        gameOverScreen.setGameover(uiLogic.getPlayerWin());
+    }
 }
 
 void Game::render() {
@@ -136,15 +153,47 @@ void Game::render() {
     game_clock->draw();
     uiLogic.draw();
 
+    if(this->isPause) {gameOverScreen.draw();}
+
     SDL_RenderPresent(renderer);
 }
 
 void Game::clean() {
+    if (player1) {
+        delete player1;
+        player1 = nullptr;
+    }
+    if (player2) {
+        delete player2;
+        player2 = nullptr;
+    }
+    if (goalLeft) {
+        delete goalLeft;
+        goalLeft = nullptr;
+    }
+    if (goalRight) {
+        delete goalRight;
+        goalRight = nullptr;
+    }
+    if (smoke) {
+        delete smoke;
+        smoke = nullptr;
+    }
+    if (backgroundTexture) {
+        SDL_DestroyTexture(backgroundTexture);
+        backgroundTexture = nullptr;
+    }
+    if (renderer) {
+        SDL_DestroyRenderer(renderer);
+        renderer = nullptr;
+    }
+    if (window) {
+        SDL_DestroyWindow(window);
+        window = nullptr;
+    }
     SDL_DestroyTexture(backgroundTexture);  // Giải phóng ảnh nền
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    IMG_Quit();
-    SDL_Quit();
 }
 
 void Game::setDeltaTime(Uint32 &lastTime) {
@@ -172,3 +221,17 @@ void Game::loadBackground(const char* path) {
     }
 }
 
+void Game::restartScreen() {
+    player1->setPos(WINDOW_WIDTH / 2 - 400, GROUND - player1->getRealHeight());
+    player2->setPos(WINDOW_WIDTH / 2 + 400 - player2->getWidth(), GROUND - player2->getRealHeight());
+    
+    //check ai player2
+    player2->setDirection("left", false);
+    player2->setDirection("right", false);
+
+    ball.init(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 4);
+    ball.setDx(0); ball.setDy(0);
+    uiLogic.resetScore();
+    setStartTime();
+    setIsPause(false);
+}

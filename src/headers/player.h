@@ -57,6 +57,7 @@ public:
         if (player_state == RUN) {this->frame_index = 0;} 
         else {this->updateShoeAnimation();}
     }
+    void setPos(int x, int y) {this->x = x; this->y = y;}; 
 
 protected:
     int x, y;

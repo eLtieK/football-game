@@ -6,6 +6,7 @@
 #include "loader.h"
 #include <string>
 
+class UiText;
 class Game;
 
 class Ui {
@@ -15,22 +16,22 @@ public:
     void handleEvents(Game &game);
     void update();
     void render();
-    SDL_Texture* createTextTexture(const std::string& text, SDL_Color color);
+    void loadBackground(const char* path);
     
     // getter
-    bool getIsIntro() {return isIntro;};
+    static bool getIsIntro() {return isIntro;};
 
     // setter
-    void setIsIntro(bool isIntro) {this->isIntro = isIntro;};
+    static void setIsIntro(bool value) {Ui::isIntro = value;};
     void setRenderer(SDL_Renderer * renderer) {this->renderer = renderer;};
 
 private:
-    bool isIntro = true;
+    static bool isIntro;
     SDL_Renderer* renderer;
+    SDL_Texture* backgroundTexture;
 
-    TTF_Font* font;
-    SDL_Texture* textTexture;
-    SDL_Rect textRect;
+    UiText * playerText;
+    UiText * aiText;
 };
 
 class UiText {
@@ -46,14 +47,20 @@ public:
     //setter
     void setName(std::string name) {
         this->name = name;
+
+        if(textTexture) {SDL_DestroyTexture(textTexture);} //xoa cai cu
+        if(outlineTexture) {SDL_DestroyTexture(outlineTexture);}
+
         textTexture = createTextTexture(name, textColor, 0);
         outlineTexture = createTextTexture(name, {0,0,0,255}, 1);
     };
 
     void setIsPlayer1(bool isPlayer1) {this->isPlayer1 = isPlayer1;};
     void setIsOutline(bool isOutline) {this->isOutline = isOutline;};
+
     //getter
     bool getIsPlayer1() {return this->isPlayer1;};
+    SDL_Rect getRect() {return this->rect;};
 
 private:
     std::string name;
