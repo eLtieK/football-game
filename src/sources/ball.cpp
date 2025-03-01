@@ -9,6 +9,13 @@ void Ball::update(float dt) {
     move(dt);
 }
 
+Ball::~Ball() {
+    if (ballTexture) {
+        SDL_DestroyTexture(ballTexture);
+        ballTexture = nullptr;
+    }
+}
+
 void Ball::move(float dt) {
     // van toc luc roi
     dy += GRAVITY * dt; 

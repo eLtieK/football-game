@@ -19,17 +19,20 @@ public:
     void render();
     void clean();
     bool running() { return isRunning; }
-    void setDeltaTime(Uint32 &lastTime);
-    void setStartTime() {this->startTime = SDL_GetTicks();};
-    float getDeltaTime();
 
     // setter
     void setIsRunning(bool isRunning) {this->isRunning = isRunning;};
+    void setIsPause(bool isPause) {this->isPause = isPause;};
+    void setIsAi(bool isAi) {this->isAi = isAi;};
+    void setDeltaTime(Uint32 &lastTime);
+    void setStartTime() {this->startTime = SDL_GetTicks();};
 
     // getter
     SDL_Renderer * getRenderer() {return renderer;};
+    float getDeltaTime();
 
     void loadBackground(const char* path);
+    void restartScreen();
 
 private:
     SDL_Window* window;
@@ -37,6 +40,8 @@ private:
     SDL_Texture* backgroundTexture;
 
     bool isRunning;
+    bool isPause = false;
+    bool isAi = false;
     Player *player1;
     Player *player2;
     Ball ball;
@@ -52,6 +57,7 @@ private:
     int currentTime = 60;
     int maxTime = 60;
     GameLogic uiLogic;
+    GameOver gameOverScreen;
 };
 
 #endif

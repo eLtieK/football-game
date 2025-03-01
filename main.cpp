@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     Uint32 lastTime = SDL_GetTicks();
     while (game.running()) {
         game.setDeltaTime(lastTime);
-        if (ui.getIsIntro()) {
+        if (Ui::getIsIntro()) {
             ui.handleEvents(game);
             ui.update();
             ui.render();

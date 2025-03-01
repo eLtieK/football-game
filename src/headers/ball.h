@@ -9,6 +9,7 @@
 
 class Ball {
 public:
+    ~Ball();
     void init(int x, int y);
     void move(float dt);
     void update(float dt);
