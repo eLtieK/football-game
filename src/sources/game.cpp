@@ -55,6 +55,7 @@ void Game::init(const char* title, int width, int height) {
 
     uiLogic.init(renderer);
     gameOverScreen.init(renderer);
+    wind.init(renderer);
 }
 
 void Game::handleEvents() {
@@ -72,8 +73,6 @@ void Game::handleEvents() {
             if (key == SDL_SCANCODE_LEFT) { player2->setDirection("left", true);} 
             if (key == SDL_SCANCODE_RIGHT) { player2->setDirection("right", true);}
             if (key == SDL_SCANCODE_UP) { player2->jump(); }
-
-            if (key == SDL_SCANCODE_SPACE) {ball.applyForce(3000, -1500);}
 
         } if (event.type == SDL_KEYUP) {
             if (key == SDL_SCANCODE_A) { player1->setDirection("left", false);} 
@@ -118,6 +117,7 @@ void Game::update() {
 
     // // Ui
     updateClock();
+    wind.update(ball);
 }
 
 void Game::updateClock() {
@@ -152,6 +152,7 @@ void Game::render() {
     //ui
     game_clock->draw();
     uiLogic.draw();
+    wind.draw();
 
     if(this->isPause) {gameOverScreen.draw();}
 

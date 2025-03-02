@@ -133,3 +133,57 @@ void UiText::draw() {
         SDL_RenderCopy(renderer, outlineTexture, NULL, &rect);
     }
 }
+
+void WindUi::init(SDL_Renderer* renderer) {
+    this->setRenderer(renderer);
+    UiText::init("Wind",{173, 216, 230, 255}, 60);
+    this->setPosition(0 + this->getRect().w, WINDOW_HEIGHT / 3);
+    this->setIsOutline(true);
+    visible = false;
+    lastWindTime = SDL_GetTicks();
+}
+
+void WindUi::randomDirect() {
+    direction = rand() % 2; // 0 hoặc 1
+    if (direction == 0)
+    {
+        this->setName("WIND =>");
+        this->setPosition(0 + this->getRect().w - 110, WINDOW_HEIGHT / 4 + 60);
+        
+    } else 
+    {
+        this->setName("<= WIND");
+        this->setPosition(WINDOW_WIDTH - this->getRect().w + 110, WINDOW_HEIGHT / 4 + 60);
+    } 
+}
+
+void WindUi::updateBall(Ball &ball) {
+    if (!visible) return ;
+    if (direction == 0) ball.applyForce(4, 0); 
+    if (direction == 1) ball.applyForce(-4, 0); 
+}
+
+void WindUi::update(Ball &ball) {
+    Uint32 currentTime = SDL_GetTicks();
+
+    // Nếu gió chưa xuất hiện và đã đủ 5 giây kể từ lần cuối có gió
+    if (!visible && currentTime > lastWindTime + windCooldown) {
+        visible = true;
+        windStartTime = currentTime; // Lưu thời gian bắt đầu gió
+        randomDirect(); // Chọn hướng gió ngẫu nhiên
+        Audio::getInstance().playSound(WIND_PATH);
+    }
+
+    // Nếu gió đang hiển thị và đã đủ 3 giây, thì tắt gió
+    if (visible && currentTime > windStartTime + windDuration) {
+        visible = false; // Ẩn gió
+        lastWindTime = currentTime;
+    }
+
+    updateBall(ball);
+}
+
+void WindUi::draw() {
+    if (visible) UiText::draw();
+}
+ 
