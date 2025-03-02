@@ -5,9 +5,13 @@
 #include <SDL2/SDL_ttf.h>
 #include "loader.h"
 #include <string>
+#include "audio.h"
+#include <random>  // Thư viện random hiện đại
+
+class Game;
+class Ball;
 
 class UiText;
-class Game;
 
 class Ui {
 public:
@@ -73,5 +77,24 @@ private:
     bool isPlayer1;
     bool isOutline = false;
 };
+
+class WindUi : public UiText {
+public:
+    void init(SDL_Renderer * renderer);
+
+    void randomDirect();
+    void update(Ball &ball);
+    void updateBall(Ball &ball);
+    void draw();
+
+private:
+    bool visible = false;
+    int direction;
+    Uint32 lastWindTime = 0;    // Lưu thời gian sự kiện gió trước đó
+    Uint32 windStartTime = 0;   // Lưu thời gian gió bắt đầu xuất hiện
+    const Uint32 windCooldown = 5000;  // 5 giây giữa các lần gió
+    const Uint32 windDuration = 3000;  // Gió tồn tại trong 3 giây
+};
+    
 
 #endif

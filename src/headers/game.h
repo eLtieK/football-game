@@ -58,6 +58,7 @@ private:
     int maxTime = 60;
     GameLogic uiLogic;
     GameOver gameOverScreen;
+    WindUi wind;
 };
 
 #endif

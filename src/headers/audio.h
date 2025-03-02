@@ -19,29 +19,30 @@ const std::string KICK3_BALL_PATH = "assests/sounds/kick3.wav";
 const std::string CROSSBAR_PATH = "assests/sounds/crossbar.mp3";
 const std::string GOAL_PATH = "assests/sounds/goal.mp3";
 const std::string JUMP_PATH = "assests/sounds/jump.wav";
+const std::string WIND_PATH = "assests/sounds/wind.mp3";
 
-    class Audio {
-    public:
-        static Audio& getInstance() {
-            static Audio instance;
-            return instance;
-        }
+class Audio {
+public:
+    static Audio& getInstance() {
+        static Audio instance;
+        return instance;
+    }
 
-        bool init();
-        void playMusic(const std::string& filename, int loop = -1);
-        void playSound(const std::string& filename, int loop = 0);
-        void stopMusic();
-        void setMusicVolume(int volume);
-        void setSoundVolume(int volume);
-        void cleanup();
+    bool init();
+    void playMusic(const std::string& filename, int loop = -1);
+    void playSound(const std::string& filename, int loop = 0);
+    void stopMusic();
+    void setMusicVolume(int volume);
+    void setSoundVolume(int volume);
+    void cleanup();
 
-        //special
-        void playRandomKick();
+    //special
+    void playRandomKick();
 
-    private:
-        std::unordered_map<std::string, Mix_Chunk*> soundEffects;
-        Mix_Music* currentMusic = nullptr;
-        std::string currentMusicFile;  // Lưu file nhạc hiện tại
-    };
+private:
+    std::unordered_map<std::string, Mix_Chunk*> soundEffects;
+    Mix_Music* currentMusic = nullptr;
+    std::string currentMusicFile;  // Lưu file nhạc hiện tại
+};
 
 #endif // AUDIO_H
